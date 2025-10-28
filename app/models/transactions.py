@@ -1,5 +1,3 @@
-#app/models/transcations.py
-
 from sqlalchemy import Column, String, Numeric, TIMESTAMP, text
 from sqlalchemy.dialects.postgresql import UUID
 from sqlalchemy.orm import declarative_base
