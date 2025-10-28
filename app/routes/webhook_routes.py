@@ -6,7 +6,7 @@ from ..db.db import get_db
 from ..services.transaction_service import process_transaction
 
 
-router = APIRouter(tags=["webhooks"])
+router = APIRouter(prefix="/v1/webhooks", tags=["webhooks"])
 
 
 @router.get("/")
