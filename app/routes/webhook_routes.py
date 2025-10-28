@@ -1,19 +1,21 @@
-from fastapi import FastAPI, Request, BackgroundTasks
-from fastapi import Depends
+# app/routes/webhook_routes.py
+
+from fastapi import APIRouter, Request, BackgroundTasks, Depends
 from sqlalchemy.orm import Session
 from sqlalchemy import text
-from .models import Transaction
 
-from .db import get_db
+from ..models.transactions import Transaction
+from ..db.db import get_db
 
-app = FastAPI()
+router = APIRouter(tags=["webhooks"])
 
 
-@app.get("/")
+@router.get("/")
 async def root():
     return {"message": "Hello World"}
 
-@app.get("/test-db")
+
+@router.get("/test-db")
 def test_db(db: Session = Depends(get_db)):
     try:
         db.execute(text("SELECT 1"))
@@ -21,15 +23,15 @@ def test_db(db: Session = Depends(get_db)):
     except Exception as e:
         return {"status": "error ❌", "details": str(e)}
 
-@app.post("/v1/webhooks/transactions")
+
+@router.post("/transactions")
 async def receive_webhook(request: Request, background_tasks: BackgroundTasks, db: Session = Depends(get_db)):
     payload = await request.json()
-    
     response = {"message": "Webhook received"}
-    
+
     background_tasks.add_task(process_transaction, payload, db)
-    
     return response
+
 
 def process_transaction(payload: dict, db: Session):
     try:
