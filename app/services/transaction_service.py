@@ -1,14 +1,19 @@
+import time
 from sqlalchemy.orm import Session
 from ..models.transactions import Transaction
 
 def process_transaction(payload: dict, db: Session):
     try:
+        print("⏳ Starting transaction processing...")
+
+        time.sleep(30)
+
         transaction = Transaction(
             transaction_id=payload.get("transaction_id"),
             source_account=payload.get("source_account"),
             destination_account=payload.get("destination_account"),
             amount=payload.get("amount"),
-            status=payload.get("status"),
+            currency=payload.get("currency"),
         )
         db.add(transaction)
         db.commit()
@@ -36,6 +41,7 @@ def get_transaction_by_id(transaction_id: str, db: Session):
         "source_account": transaction.source_account,
         "destination_account": transaction.destination_account,
         "amount": transaction.amount,
+        "currency": transaction.currency,
         "status": transaction.status,
         "created_at": transaction.created_at,
         "processed_at": getattr(transaction, "processed_at", None),  # safe access

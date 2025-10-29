@@ -5,9 +5,9 @@ from ..db.db import get_db
 from ..services.transaction_service import process_transaction
 
 
-router = APIRouter(prefix="/v1", tags=["webhooks"])
+router = APIRouter(prefix="/v1/webhooks", tags=["webhooks"])
 
-@router.post("/webhooks/transactions")
+@router.post("/transactions")
 async def receive_webhook(request: Request, background_tasks: BackgroundTasks, db: Session = Depends(get_db)):
     payload = await request.json()
     response = {"message": "Webhook received"}
