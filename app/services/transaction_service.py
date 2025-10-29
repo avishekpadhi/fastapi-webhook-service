@@ -48,7 +48,7 @@ def process_transaction(payload: dict, db: Session):
 
     except Exception as e:
         db.rollback()
-        print("❌ Error inserting transaction:", str(e))
+        print("Error inserting transaction:", str(e))
 
 
 
