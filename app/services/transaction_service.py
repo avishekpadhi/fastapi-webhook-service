@@ -1,10 +1,11 @@
 import time
+from datetime import datetime, timezone
 from sqlalchemy.orm import Session
 from ..models.transactions import Transaction
 
 def process_transaction(payload: dict, db: Session):
     try:
-        print("⏳ Starting transaction processing...")
+        print("Starting transaction processing...")
 
         time.sleep(30)
 
@@ -15,7 +16,7 @@ def process_transaction(payload: dict, db: Session):
             .filter(Transaction.transaction_id == transaction_id)
             .first()
         )
-        if existing: return print(f"⚠️ Transaction {transaction_id} already processed — skipping.")
+        if existing: return print(f"Transaction {transaction_id} already processed — skipping.")
 
         transaction = Transaction(
             transaction_id=payload.get("transaction_id"),
@@ -23,19 +24,19 @@ def process_transaction(payload: dict, db: Session):
             destination_account=payload.get("destination_account"),
             amount=payload.get("amount"),
             currency=payload.get("currency"),
+            status="processed",
+            processed_at=Time.now()
         )
         db.add(transaction)
         db.commit()
-        print("✅ Transaction stored successfully:", payload)
+        print("Transaction stored successfully:", payload)
     except Exception as e:
-        db.rollback()  # always rollback on errors
-        print("❌ Error inserting transaction:", str(e))
+        db.rollback() 
+        print("Error inserting transaction:", str(e))
 
 
 def get_transaction_by_id(transaction_id: str, db: Session):
-    """
-    Retrieve a transaction by ID using SQLAlchemy ORM.
-    """
+
     transaction = (
         db.query(Transaction)
         .filter(Transaction.transaction_id == transaction_id)
@@ -53,5 +54,5 @@ def get_transaction_by_id(transaction_id: str, db: Session):
         "currency": transaction.currency,
         "status": transaction.status,
         "created_at": transaction.created_at,
-        "processed_at": getattr(transaction, "processed_at", None),  # safe access
+        "processed_at": getattr(transaction, "processed_at", None),  
     }

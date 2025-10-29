@@ -10,9 +10,10 @@ class Transaction(Base):
 
     id = Column(UUID(as_uuid=True), primary_key=True, default=uuid.uuid4)
     created_at = Column(TIMESTAMP(timezone=True), server_default=text("now()"))
+    processed_at = Column(TIMESTAMP(timezone=True), nullable=True)
     transaction_id = Column(String, nullable=False)
     source_account = Column(String, nullable=False)
     destination_account = Column(String, nullable=False)
     amount = Column(Numeric, nullable=False)
     currency = Column(String(3), nullable=False)
-    status = Column(String, nullable=False)
+    status = Column(String, nullable=False, server_default=text("'pending'"))

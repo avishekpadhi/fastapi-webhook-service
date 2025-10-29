@@ -5,8 +5,6 @@ from .routes.transaction_routes import router as transaction_router
 
 from datetime import datetime, timezone
 
-
-
 app = FastAPI()
 app.include_router(webhook_router)
 app.include_router(transaction_router)
