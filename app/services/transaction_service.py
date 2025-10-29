@@ -8,6 +8,15 @@ def process_transaction(payload: dict, db: Session):
 
         time.sleep(30)
 
+        transaction_id = payload.get("transaction_id")
+
+        existing = (
+            db.query(Transaction)
+            .filter(Transaction.transaction_id == transaction_id)
+            .first()
+        )
+        if existing: return print(f"⚠️ Transaction {transaction_id} already processed — skipping.")
+
         transaction = Transaction(
             transaction_id=payload.get("transaction_id"),
             source_account=payload.get("source_account"),
