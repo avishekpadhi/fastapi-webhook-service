@@ -12,5 +12,6 @@ class Transaction(Base):
     created_at = Column(TIMESTAMP(timezone=True), server_default=text("now()"))
     transaction_id = Column(String, nullable=False)
     source_account = Column(String, nullable=False)
+    destination_account = Column(String, nullable=False)
     amount = Column(Numeric, nullable=False)
     status = Column(String, nullable=False)
