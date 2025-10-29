@@ -30,8 +30,61 @@ source venv/bin/activate #for macOS/Linux
 pip install -r requirements.txt
 
 4️⃣ Environment Variables
-Create a .env file in the project root and add the Postgres DB connection string:
+#Create a .env file in the project root
+touch .env
+
+Add the Postgres DB connection string in the .env file:
 DATABASE_URL=postgresql://<username>:<password>@<host>:<port>/<dbname>
 
 6️⃣ Run the Server
 fastapi dev app/main.py
+
+TESTING IN LOCAL
+
+1️⃣ After starting the server, in the terminal:
+
+curl http://127.0.0.1:8000/
+
+✅ Expected response:
+
+{
+"status": "HEALTHY",
+"current_time": "2025-10-29T12:10:00.123Z"
+}
+
+curl -X POST http://127.0.0.1:8000/v1/webhooks/transactions \
+ -H "Content-Type: application/json" \
+ -d '{
+"transaction_id": "txn_abc123def456",
+"source_account": "acc_user_789",
+"destination_account": "acc_store_123",
+"amount": 1000.50,
+"currency": "INR"
+}'
+
+✅ Expected response (within 500ms):
+
+{
+"message": "Webhook received"
+}
+
+curl http://127.0.0.1:8000/v1/transactions/txn_abc123def456
+
+✅ Expected response
+If you query before 30s ⏱️ → you’ll get:
+
+{
+"transaction_id": "txn_abc123def456",
+"status": "processing",
+...
+}
+
+✅ Expected response
+If you query after 30s →
+
+{
+"transaction_id": "txn_abc123def456",
+"status": "processed",
+"processed_at": "2025-10-29T12:15:00.000Z"
+...
+}
