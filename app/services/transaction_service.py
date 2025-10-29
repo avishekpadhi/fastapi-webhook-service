@@ -25,7 +25,7 @@ def process_transaction(payload: dict, db: Session):
             amount=payload.get("amount"),
             currency=payload.get("currency"),
             status="processed",
-            processed_at=Time.now()
+            processed_at=datetime.now(timezone.utc)
         )
         db.add(transaction)
         db.commit()
